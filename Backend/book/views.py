@@ -192,3 +192,9 @@ class BusketView(APIView):
             serializer.save(user=request.user)
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self,request):
+        queryset = Book.objects.all().filter(user=self.request.user)
+        queryset.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
