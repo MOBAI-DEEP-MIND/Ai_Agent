@@ -50,20 +50,19 @@ def format_response(response_text):
 
 
 
-def generate_response(query, context_point,tool_name="def"):
+def generate_response(query, context,tool_name="def"):
     """Generate a refined query prompt based on the provided context, ensuring all book fields are included."""
     
-    # # Ensure context is a string
-    # if isinstance(context, list):
-    #     context = "\n".join(str(item) for item in context)
-    payload_texts = [item.dict()["payload"]["text"] for item in context_point]
+    # Ensure context is a string
+    if isinstance(context, list):
+        context = "\n".join(str(item) for item in context)
 
-    print("payload_texts",payload_texts)
+    
     prompt = f"""
     Given the following context, identify books that satisfy the criteria of the query.
 
     Context:
-    {payload_texts}
+    {context}
 
     Query:
     "{query}"
@@ -88,7 +87,7 @@ def generate_response(query, context_point,tool_name="def"):
     """
 
     response = llm.invoke(prompt)
-    print(payload_texts)
+    print(context)
     if tool_name == "perform_search":
 
         # Ensure the response is a string (extracting the actual content)

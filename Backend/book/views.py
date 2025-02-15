@@ -179,7 +179,7 @@ class BookRecommendationView(ListAPIView):
 
 
 class BusketView(APIView):
-    serializer_class = BookSerializer
+    serializer_class = BusketSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
     
