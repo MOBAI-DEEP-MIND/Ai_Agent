@@ -157,11 +157,22 @@ class BookRecommendationView(ListAPIView):
         return books
 
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset() # get the history books of the user
+        queryset = self.get_queryset()  # get the history books of the user
         queryset_dict = list(queryset.values())
-        print("dict ",queryset_dict)
-        result = perform_recommendations.invoke(input={"data":queryset_dict})
-        return Response({"data":result}, status=status.HTTP_200_OK)
+
+        # Get all books from the database
+        books_df = list(Book.objects.values("id", "title", "genre", "description"))
+
+        print("User Search History:", queryset_dict)
+        print("All Books:", books_df)
+
+        result = perform_recommendations.invoke({
+            "user_search_history": queryset_dict,  
+            "books_df": books_df
+        })
+
+        return Response({"data": result}, status=status.HTTP_200_OK)
+
 
 
 
@@ -174,3 +185,10 @@ class BusketView(APIView):
     
     def get(self,request):
         queryset = Book.objects.all().filter(user=self.request.user)
+
+    def post(self,request):
+        serializer = BusketSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
