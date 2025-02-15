@@ -99,6 +99,7 @@ def main(query):
     #         print(f"Inserted batch {i//batch_size + 1}/{len(qdrant_points)//batch_size + 1}")
 
     # **Step 2: Search with query (no storing of query)**
+
     print("Embedding query...")
     query_embedding = embed_query(query, embeddings_model)
     
@@ -112,5 +113,3 @@ def main(query):
 
     print("Process completed successfully!")
     return similar_chunks
-if __name__ == "__main__":
-    main("Im searching for a book that talks about thriller/suspense genre")

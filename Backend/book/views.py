@@ -78,7 +78,7 @@ class QueryView(CreateAPIView):
         query = request.data.get("query")
         response = handle_query(query,kwargs={"user":request.user})
         print("res",response) 
-        return Response({"data":response}, status=status.HTTP_200_OK)
+        return Response(response, status=status.HTTP_200_OK)
     
  
 
