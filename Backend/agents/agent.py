@@ -16,29 +16,30 @@ def perform_purchase(query_obj ) -> dict:
     try:
        
         query = query_obj ["query"]
-        user_id = query_obj["user_id"]
+        user = query_obj["user"]
         
         context_data = main(query) 
         res = generate_response(query, context_data,tool_name="perform_purchase")
         print("res purshase",res)
        
-        book = Book.objects.filter(title=res)
+        book = Book.objects.filter(title=res).first()
+        print(user)
+        print("book",book)
         busket = {
-            "user": user_id,
-            "book": book
+            "book": [book.id]
         } 
         print("result of search",res)
         serializer = BusketSerializer(data=busket)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(user=user)
             return {
                 "status": "success",
                 "message": "Book added to busket."
             }
         else:
             return {
-                "status": "error",
-                "message": f"def{serializer.errors}"
+                "status": "ser error",
+                "message": f"{serializer.errors}"
             }
 
     except Exception as e:
@@ -65,9 +66,12 @@ def perform_search(query: str):
 
 
 @tool
-def perform_recommendations(user_search_history, books_df):
+def perform_recommendations(user_search_history):
     """Generate book recommendations based on a user's search history."""
-    history_text = "\n".join([f"User {row['id_user']} searched for Book {row['idbook']}" for row in user_search_history.iterrows()])
+    history = user_search_history["data"]
+
+    
+    history_text = "\n".join([f"User {row['id_user']} searched for Book {row['idbook']}" for row in history.iterrows()])
 
 
     prompt = f"""
@@ -119,13 +123,13 @@ def handle_query(query: str, **kwargs) -> dict:
     refined_query = llm_chain.run(query) 
     
     if tool_name == "perform_purchase":
-        user_id = kwargs['kwargs']['user'].id
-        if user_id is None:
+        user = kwargs['kwargs']['user']
+        if user is None:
             return {
                 "status": "error",
                 "message": "Missing user_id for purchase."
             }
-        return perform_purchase.invoke({"query_obj": {"query": refined_query, "user_id": user_id}})
+        return perform_purchase.invoke({"query_obj": {"query": refined_query, "user": user}})
 
 
 

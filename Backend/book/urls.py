@@ -2,7 +2,7 @@ from django.urls import path
 
 from .views import BookView, PurchaseView, QueryView, BookDetailView, AuthorView, CategoryView, BookAdminListView
 
-from .views import PurchaseView,BookDetailView, BookAdminDetailView, BookRecommendationView
+from .views import PurchaseView,BookDetailView, BookAdminDetailView, BookRecommendationView,BusketView
 
 urlpatterns = [
     path('book/',BookView.as_view(),name='book'),
@@ -17,6 +17,7 @@ urlpatterns = [
     path('query/',QueryView.as_view(),name='search'),
     path('books/<int:pk>/',BookDetailView.as_view(),name='book'),
     path('book-recommendation/',BookRecommendationView.as_view(),name='book-recommendation'),
+    path('busket/',BusketView.as_view(),name='busket'), 
 ]
 
 

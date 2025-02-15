@@ -34,6 +34,7 @@ def format_response(response_text):
     """
     try:
         # Remove Markdown code blocks (```json and ```)
+        response_text = response_text
         cleaned_text = re.sub(r"```json|```", "", response_text).strip()
 
         # Load as JSON
@@ -86,11 +87,12 @@ def generate_response(query, context,tool_name="def"):
     """
 
     response = llm.invoke(prompt)
-
+    print(context)
     if tool_name == "perform_search":
 
         # Ensure the response is a string (extracting the actual content)
         if hasattr(response, "content"):
+            print("response",response.content)
             return format_response(response.content)  # Extract text content as-is
         
         return {"error": "Invalid response format"}  # Fallback if response is not as expected

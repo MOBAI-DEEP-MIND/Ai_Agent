@@ -158,17 +158,19 @@ class BookRecommendationView(ListAPIView):
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset() # get the history books of the user
-        result = perform_recommendations.invoke(input=queryset)
+        queryset_dict = list(queryset.values())
+        print("dict ",queryset_dict)
+        result = perform_recommendations.invoke(input={"data":queryset_dict})
         return Response({"data":result}, status=status.HTTP_200_OK)
 
 
 
 
 
-# class BusketView(APIView):
-#     serializer_class = BookSerializer
-#     permission_classes = [IsAuthenticated]
-#     authentication_classes = [JWTAuthentication]
+class BusketView(APIView):
+    serializer_class = BookSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
     
-#     def get(self,request):
-#         queryset = Book.objects.all().filter(user=self.request.user)
+    def get(self,request):
+        queryset = Book.objects.all().filter(user=self.request.user)
