@@ -11,27 +11,21 @@ from agents.llm import llm  # Assuming this is your LLM instance
 
 
 @tool
-def perform_purchase(query_obj, ) -> dict:
+def perform_purchase(query_obj ) -> dict:
     """Perform a purchase of a book for a user."""
     try:
-        # books = perform_search(query) 
-        query = query_obj["query_obj"] ["query"]
-        user_id = query_obj["query_obj"]["user_id"]
-        print("def def",user_id)
+       
+        query = query_obj ["query"]
+        user_id = query_obj["user_id"]
+        
         context_data = main(query) 
         res = generate_response(query, context_data,tool_name="perform_purchase")
         print("res purshase",res)
        
-        try:
-            number_books = 1 # Default to 1 book
-        except ValueError:
-            return {
-                "status": "error",
-                "message": "Invalid response from LLM: expected a number."
-            }
+        book = Book.objects.filter(title=res)
         busket = {
-            "user": user_id
-            # "book": books
+            "user": user_id,
+            "book": book
         } 
         print("result of search",res)
         serializer = BusketSerializer(data=busket)
@@ -131,7 +125,6 @@ def handle_query(query: str, **kwargs) -> dict:
                 "status": "error",
                 "message": "Missing user_id for purchase."
             }
-        print(user_id)
         return perform_purchase.invoke({"query_obj": {"query": refined_query, "user_id": user_id}})
 
 

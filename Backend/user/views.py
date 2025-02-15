@@ -13,7 +13,7 @@ from .serializers import UserSerializer
 class CreateUserView(APIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
-    authentication_classes = []
+    
     permission_classes = [AllowAny]
 
     def post(self,request):
